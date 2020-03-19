@@ -15,15 +15,16 @@ private:
 		Node* rc;
 		int dist;
 		T val;
-		Node(const T &vall)
+		Node(const T &vall):val(vall)
 		{
 			lc = rc = nullptr;
 			dist = 0;
-			val = vall;
 		}
 	}; 
 	Node *copy_node(const Node *other_node)
 	{
+		if(other_node == nullptr)
+			return nullptr;
 		Node *new_node = new Node(other_node->val);
 		if(other_node->lc != nullptr)
 			new_node->lc = copy_node(other_node->lc);
@@ -81,6 +82,8 @@ public:
 	}
 	priority_queue &operator=(const priority_queue &other)
 	{
+		if(this == &other)
+			return *this;
 		delete_node(head);
 		head = copy_node(other.head);
 		sizee = other.sizee;
@@ -123,6 +126,7 @@ public:
 		sizee += other.sizee;
 		head = merge(head, other.head);
 		other.head = nullptr;
+		other.sizee = 0;
 	}
 };
 
