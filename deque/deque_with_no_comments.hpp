@@ -37,7 +37,6 @@ private:
 			x.data = nullptr;
 			return *this;
 		}
-        // DataType& operator = (const std::nullptr_t &nptr) { return dat = nptr, *this; }
     };
 	struct Block
 	{
@@ -80,7 +79,7 @@ private:
     	{
     		return end-start+1;
     	}
-    	void delete_empty_block()//可能有问题
+    	void delete_empty_block()
     	{
             if(size())
             	return;
@@ -90,16 +89,13 @@ private:
             	prv->next = next;
             if(next != nullptr)
             	next->prv = prv;
-         //   printf("%d      %d\n", prv->next, next->prv);
             delete this;
-            // printf("Caution: delete empty block\n");
         }
         void zhenli()
     	{    	
     		int oldsize = size();
             if(start > allow_max_start_from)
-            {
-            	// printf("zhenli1 \n");	
+            {	
             	for(int i = 0; i < size(); i++)
             	{
             		datas[start_from+i].data = datas[start+i].data;
@@ -110,7 +106,6 @@ private:
             }
             else if(start < allow_min_start_from)
             {
-            	// printf("zhenli2 \n");	
             	for(int i = size()-1; i >= 0; i--)
             	{
             		datas[start_from+i].data = datas[start+i].data;
@@ -119,17 +114,13 @@ private:
             	start = start_from;
             	end = start + oldsize - 1;
             }
-         
     	}
         void split()
         {
-        //	 printf("`````````````````````````size%d\n", size());
         	if(size() >= allowblocksize)
         	{
-        		// printf("Caution: spilt\n");
 	            int size1 = size()/2;
 	            int size2 = size()-size1;
-	        //    printf("spilt %d  %d\n", size1, size2);
 	            Block *new1 = new Block();
 	            new1->start = start_from;
 	            new1->end = start_from + size1 - 1;
@@ -166,7 +157,6 @@ private:
         }
     	void push_front_block(const T &x)
     	{
-    		// printf("%d    %d\n", start, end);
     		start--;
     		datas[start].data = new T(x);
     		zhenli();
@@ -174,16 +164,13 @@ private:
     	}
         void push_back_block(const T &x)
         {
-        	// printf("2\n");
         	end++;
         	datas[end].data = new T(x);
-//        	printf("then:::%d   %d\n", end, x);
         	zhenli();
         	split();
         }
         void pop_front_block()
         {
-        	// printf("3\n");
         	delete datas[start].data;
         	datas[start].data = nullptr;
         	start++;
@@ -191,7 +178,6 @@ private:
         }
         void pop_back_block()
         {
-        	// printf("4\n");
         	delete datas[end].data;
         	datas[end].data = nullptr;
         	end--;
@@ -200,7 +186,6 @@ private:
         friend void it_move_right(Block* &itblock, datatype* &itdata, int n)
         {
             int cnt = itdata - &(itblock->datas[itblock->start]);
-            // printf("%d\n", *itdata->data); 
             int alltomove = cnt + n;
             while(alltomove >= itblock->size())
             {
@@ -214,7 +199,6 @@ private:
                 itblock = itblock->next;
             }
             itdata = &itblock->datas[itblock->start+alltomove];
-       //     printf("iterator in block pos %d   %d  \n", itblock, itdata);
         }
         friend void it_move_left(Block* &itblock, datatype* &itdata, int n)
         {
@@ -256,25 +240,6 @@ private:
         friend void it_move_right(const Block* &itblock, const datatype* &itdata, int n)
         {
             int cnt = itdata - &(itblock->datas[itblock->start]);
-            // printf("iterator in block pos %d\n", cnt);
-            // if(cnt + n >= itblock->size())
-            // {
-            //     if(!itblock->next->size())
-            //     {
-            //     	itdata += n;
-            //     	return;
-            //     }
-            //     n -= itblock->size() - cnt;
-            //     itblock = itblock->next;
-            //     while(n > itblock->size())
-            //     {
-            //     	n -= itblock->size();
-            //     	itblock = itblock->next;
-            //     }
-            //     itdata = &itblock->datas[itblock->start+n];
-            // }
-            // else
-            // 	itdata += n;
             int alltomove = cnt + n;
             while(alltomove >= itblock->size())
             {
@@ -292,26 +257,6 @@ private:
         friend void it_move_left(const Block* &itblock, const datatype* &itdata, int n)
         {
             int cnt = &(itblock->datas[itblock->end]) - itdata;
-            // printf("iterator in block pos back %d\n", cnt);
-     //        if(cnt - n <= 0)
-     //        {
-     //            if(!itblock->prv->size())
-     //            {
-					// itdata -= n;
-     //            	return;
-     //            }
-     //            n -= itblock->size() - cnt;
-     //            itblock = itblock->prv;
-     //            while(n > itblock->size())
-     //            {
-     //            	n -= itblock->size();
-     //            	itblock = itblock->prv;
-     //            }
-     //            itdata = &itblock->datas[itblock->end-n];
-     //        }
-     //        else
-     //        	itdata -= n;
-     //    }
             int alltomove = n + cnt;
             while(alltomove >= itblock->size())
             {
@@ -334,7 +279,6 @@ private:
             	datas[i].data = datas[i-1].data;
             datas[id].data = new T(value);
             split();
-            // printf("insert: id   %d   %d   %lld\n", id, value, *datas[id].data);
         }
         void remove_at_id_block(int id)
         {
@@ -348,15 +292,7 @@ private:
             delete datas[end+1].data;
             datas[end+1].data = nullptr;
             delete_empty_block(); 
-//            printf("after_delete: id   %d   %lld\n", id, *datas[id].data);
         }
-    	// void checkmain()
-    	// {
-     //    	printf("check tail empty %d check head empty %d\n", root->next == nullptr, root->prv == nullptr);
-    	// }
-
-
-
 	};
 	Block *root;
 	void copy(const Block *otherroot)
@@ -411,13 +347,9 @@ private:
     void allocateprp()
     {
     	if(root == nullptr)
-    	{
-    	//	printf("caution no root");
     		root = new Block();
-    	}
     	if(root->next == nullptr)
     	{
-    	//	printf("caution no 1st block");
     		root->prv = root->next = new Block();
     		root->prv->next = root;
     		root->next->prv = root;
@@ -442,9 +374,7 @@ private:
         	id -= p->size();
         	 p = p->next;
         }
-        // printf("REMOVE_AT_ID:%d\n",id);
         p->remove_at_id_block(id);
-        // printf("++++++++++++++++++++++++%d   %d   %d   %d\n", this, p, p->datas + p->start+id, id);
 	}
 public:
 	class const_iterator;
@@ -462,12 +392,10 @@ public:
 		{
 			iterator ret = *this;
 			ret.id += n;
-	//		printf("%d  ----  %d\n", ret.id, n);
 			if(n > 0)
 				it_move_right(ret.itblock, ret.itdata, n);
 			else if(n < 0)
 				it_move_left(ret.itblock, ret.itdata, -n);
-		//	 printf("+++++%d   %d\n", ret.itblock, ret.itdata);
 			return ret; 
 		}
 		iterator operator-(const int &n) const
@@ -495,26 +423,22 @@ public:
 		{
 			return *this = *this - n;
 		}
-		//iter++
 		iterator operator++(int)
 		{
 			iterator tmp = *this;
 			*this = *this + 1;
 			return tmp;
 		}
-		//++iter
 		iterator& operator++()
 		{
 			return *this = *this + 1;
 		}
-		//iter--
 		iterator operator--(int)
 		{
 			iterator tmp = *this;
 			*this = *this - 1;
 			return tmp;
 		}
-		//--iter
 		iterator& operator--()
 		{
 			return *this = *this - 1;
@@ -535,12 +459,10 @@ public:
 		}
 		bool operator==(const iterator &rhs) const
 		{
-		//	printf("================%d %d %d %d %d %d !!!!!\n",id,rhs.id,itblock,rhs.itblock,itdata,rhs.itdata);
 			return dq == rhs.dq && itblock == rhs.itblock && itdata == rhs.itdata && id == rhs.id;
 		}
 		bool operator==(const const_iterator &rhs) const
 		{
-			// printf("================%d %d\n",id,rhs.id);
 			return dq == rhs.dq && itblock == rhs.itblock && itdata == rhs.itdata && id == rhs.id;
 		}
 		bool operator!=(const iterator &rhs) const 
@@ -599,26 +521,22 @@ public:
 		{
 			return *this = *this - n;
 		}
-		//iter++
 		const_iterator operator++(int)
 		{
 			const_iterator tmp = *this;
 			*this = *this + 1;
 			return tmp;
 		}
-		//++iter
 		const_iterator& operator++()
 		{
 			return *this = *this + 1;
 		}
-		//iter--
 		const_iterator operator--(int)
 		{
 			const_iterator tmp = *this;
 			*this = *this - 1;
 			return tmp;
 		}
-		//--iter
 		const_iterator& operator--()
 		{
 			return *this = *this - 1;
@@ -639,12 +557,10 @@ public:
 		}
 		bool operator==(const iterator &rhs) const
 		{
-			// printf("================%d %d\n",id,rhs.id);
 			return dq == rhs.dq && itblock == rhs.itblock && itdata == rhs.itdata && id == rhs.id;
 		}
 		bool operator==(const const_iterator &rhs) const
 		{
-			// printf("================%d %d\n",id,rhs.id);
 			return dq == rhs.dq && itblock == rhs.itblock && itdata == rhs.itdata && id == rhs.id;
 		}
 		bool operator!=(const iterator &rhs) const 
@@ -696,8 +612,6 @@ public:
 	}
 	T & operator[](const size_t &pos)
 	{
-		// printf("status%d %d\n", root->next->size(), root->next->next->size());
-		// printf("finding%d\n", pos);
 		if(pos >= totalsize || pos < 0)
 			throw index_out_of_bound();
 		else return findpos(pos);
@@ -732,7 +646,6 @@ public:
 	}
 	iterator end()
 	{
-//		printf("%d}}}}}}}}}}}}}}}}}}}}}}}}}}}}}\n", totalsize);
 		return iterator(this, root->prv, root->prv->datas + root->prv->end+1, size());
 	}
 	const_iterator cend() const
@@ -754,12 +667,6 @@ public:
 		totalsize = 0;
 		allocateprp();
 	}
-	/**
-	 * inserts elements at the specified locat on in the container.
-	 * inserts value before pos
-	 * returns an iterator pointing to the inserted value
-	 *     throw if the iterator is invalid or it point to a wrong place.
-	 */
 	iterator insert(iterator pos, const T &value) 
 	{
 		allocateprp();
@@ -776,31 +683,17 @@ public:
         	tmpid -= p->size();
         	p = p->next;
         }
-        // printf("%d------------------------\n", size());
         return iterator(this, p, p->datas + p->start+tmpid, pos.id);
 	}
-	/**
-	 * removes specified element at pos.
-	 * removes the element at pos.
-	 * returns an iterator pointing to the following element, if pos pointing to the last element, end() will be returned.
-	 * throw if the container is empty, the iterator is invalid or it points to a wrong place.
-	 */
+
 	iterator erase(iterator pos)
 	{
-		// printf("erasing  %d  %d", pos.id, totalsize);
 		if(this != pos.dq)
-		{
-//			printf("invalid ietrator when erase\n");
 			throw invalid_iterator();
-		}
 		if(size_t(pos.id) + 1 > size())
-		{
-//			printf("invalid ietrator when erase\n");
         	throw invalid_iterator();
-        }
         remove_at_id(pos.id);
         totalsize--;
-        // printf("%d***************************\n", size());
         if(pos.id >= size())
         	return end();
         int tmpid = pos.id;
@@ -810,7 +703,6 @@ public:
         	tmpid -= p->size();
         	p = p->next;
         }
-        // printf("------------------------%d   %d   %d   %d\n", this, p, p->datas + p->start+tmpid, pos.id);
         return iterator(this, p, p->datas + p->start+tmpid, pos.id);
 	}
 	void push_back(const T &value)
